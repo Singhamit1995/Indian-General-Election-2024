@@ -1,0 +1,6 @@
+Power Bi Report link:
+
+https://app.powerbi.com/view?r=eyJrIjoiYTlhODFjMTUtZTcxYy00NDIxLTg1MGEtNGE0MTg2ODA2ZTEwIiwidCI6IjAzNmI5ZTU1LWY4MmItNDYxNC1hYjBjLWZiMDQ0NzNmOGZhYSJ9
+
+Database link
+https://www.kaggle.com/datasets/jhajalaj/india-2024-elections-results-dataset
