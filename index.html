@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Indian General Election 2024 – Data Dashboard</title>
 
-  <!-- Prism.js CSS -->
+  <!-- Prism.js CSS for syntax highlighting -->
   <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet" />
 
   <style>
@@ -49,18 +49,10 @@
       font-weight: bold;
       margin: 1rem 0;
     }
-    .download-btn {
-      display: inline-block;
-      background-color: #1a73e8;
-      color: white;
-      padding: 0.6rem 1rem;
-      border-radius: 5px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-    .download-btn:hover {
-      background-color: #0f5ad3;
+    img {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
   </style>
 </head>
@@ -77,6 +69,12 @@
     <p>
       👉 <a href="https://app.powerbi.com/view?r=eyJrIjoiYTlhODFjMTUtZTcxYy00NDIxLTg1MGEtNGE0MTg2ODA2ZTEwIiwidCI6IjAzNmI5ZTU1LWY4MmItNDYxNC1hYjBjLWZiMDQ0NzNmOGZhYSJ9" target="_blank">Open Power BI Dashboard</a>
     </p>
+  </section>
+
+  <section>
+    <h2>🧬 Database Schema Diagram</h2>
+    <p>This ER diagram shows the relationships between tables used in the 2024 Indian General Election analysis:</p>
+    <img src="assets/schema.png" alt="Indian Election ER Diagram" />
   </section>
 
   <section>
@@ -166,7 +164,9 @@ WHERE cd.EVM_Votes = (
   FROM constituencywise_details cd1
   WHERE cd1.Constituency_ID = cd.Constituency_ID
 );
-      
+      </code></pre>
+    </details>
+  </section>
 
   <section>
     <h2>📄 Project Overview</h2>
@@ -175,9 +175,12 @@ WHERE cd.EVM_Votes = (
     </p>
   </section>
 
-  <!-- Prism.js JS for syntax highlighting -->
+  <!-- Prism.js for SQL highlighting -->
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-sql.min.js"></script>
 
 </body>
 </html>
+
+   
+
