@@ -53,15 +53,109 @@
   </section>
 
   <section>
-    <h2>🗃️ Download SQL Project Files</h2>
-    <p>Download the raw SQL files used in this analysis:</p>
-    <ul>
-      <li><a href="data/your_sql_file.sql" download>Election_Analysis.sql</a></li>
-    </ul>
-  </section>
-
-  <section>
     <h2>📄 Project Overview</h2>
+    <section>
+  <h2>🧾 SQL Queries Used in This Project</h2>
+  <pre><code>
+-- Use database
+USE [Indian Election];
+
+-- Table selects
+SELECT * FROM constituencywise_details;
+SELECT * FROM constituencywise_results;
+SELECT * FROM partywise_results;
+SELECT * FROM statewise_results;
+SELECT * FROM states;
+
+-- Total Seats
+SELECT DISTINCT COUNT(parliament_constituency) AS Total_Seats FROM constituencywise_results;
+
+-- Total seats per state
+SELECT s.state AS State_Name,
+       COUNT(cr.parliament_constituency) AS Total_Seats
+FROM constituencywise_results cr
+INNER JOIN statewise_results sr ON cr.parliament_constituency = sr.parliament_constituency
+INNER JOIN states s ON sr.State_ID = s.State_ID
+GROUP BY s.state
+ORDER BY Total_Seats DESC;
+
+-- NDA total seats
+SELECT SUM(CASE 
+             WHEN party IN ('Bharatiya Janata Party - BJP', 'Telugu Desam - TDP', 'Janata Dal  (United) - JD(U)', 
+                            'Shiv Sena - SHS', 'AJSU Party - AJSUP', 'Apna Dal (Soneylal) - ADAL', 
+                            'Asom Gana Parishad - AGP', 'Hindustani Awam Morcha (Secular) - HAMS', 
+                            'Janasena Party - JnP', 'Janata Dal  (Secular) - JD(S)', 
+                            'Lok Janshakti Party(Ram Vilas) - LJPRV', 'Nationalist Congress Party - NCP', 
+                            'Rashtriya Lok Dal - RLD', 'Sikkim Krantikari Morcha - SKM', 
+                            'United People’s Party, Liberal - UPPL')
+             THEN [Won]
+             ELSE 0
+           END) AS NDA_Total_Seats_Won
+FROM partywise_results;
+
+-- I.N.D.I.A total seats
+SELECT SUM(CASE 
+             WHEN party IN ('Indian National Congress - INC', 'Aam Aadmi Party - AAAP', 
+                            'All India Trinamool Congress - AITC', 'Communist Party of India - CPI', 
+                            'Communist Party of India  (Marxist) - CPI(M)', 
+                            'Communist Party of India  (Marxist-Leninist)  (Liberation) - CPI(ML)(L)', 
+                            'Dravida Munnetra Kazhagam - DMK', 'Indian Union Muslim League - IUML', 
+                            'Jammu & Kashmir National Conference - JKN', 'Jharkhand Mukti Morcha - JMM', 
+                            'Kerala Congress - KEC', 'Rashtriya Janata Dal - RJD', 
+                            'Samajwadi Party - SP', 'Shiv Sena (Uddhav Balasaheb Thackrey) - SHSUBT', 
+                            'Viduthalai Chiruthaigal Katchi - VCK')
+             THEN [Won]
+             ELSE 0
+           END) AS INDIA_Total_Seats_Won
+FROM partywise_results;
+
+-- Update table to add alliances
+ALTER TABLE partywise_results ADD party_alliance VARCHAR(50);
+
+-- Update NDA
+UPDATE partywise_results
+SET party_alliance = 'NDA'
+WHERE party IN ('Bharatiya Janata Party - BJP', 'Telugu Desam - TDP', ...);
+
+-- Update INDIA
+UPDATE partywise_results
+SET party_alliance = 'I.N.D.I.A'
+WHERE party IN ('Indian National Congress - INC', 'Aam Aadmi Party - AAAP', ...);
+
+-- Set OTHER
+UPDATE partywise_results
+SET party_alliance = 'OTHER'
+WHERE party_alliance IS NULL;
+
+-- Total seats by alliance
+SELECT party_alliance, SUM(won) AS Seats_Won
+FROM partywise_results
+GROUP BY party_alliance;
+
+-- State-wise alliance breakdown
+SELECT s.State AS State_Name,
+       SUM(CASE WHEN p.party_alliance = 'NDA' THEN 1 ELSE 0 END) AS NDA_Seats_Won,
+       SUM(CASE WHEN p.party_alliance = 'I.N.D.I.A' THEN 1 ELSE 0 END) AS INDIA_Seats_Won,
+       SUM(CASE WHEN p.party_alliance = 'OTHER' THEN 1 ELSE 0 END) AS OTHER_Seats_Won
+FROM constituencywise_results cr
+JOIN partywise_results p ON cr.Party_ID = p.Party_ID
+JOIN statewise_results sr ON cr.Parliament_Constituency = sr.Parliament_Constituency
+JOIN states s ON sr.State_ID = s.State_ID
+WHERE p.party_alliance IN ('NDA', 'I.N.D.I.A', 'OTHER')
+GROUP BY s.State
+ORDER BY s.State;
+
+-- Candidate with most EVM votes in each constituency
+SELECT TOP 10 cr.Constituency_Name, cd.Candidate, cd.EVM_Votes
+FROM constituencywise_details cd
+JOIN constituencywise_results cr ON cd.Constituency_ID = cr.Constituency_ID
+WHERE cd.EVM_Votes = (
+  SELECT MAX(cd1.EVM_Votes)
+  FROM constituencywise_details cd1
+  WHERE cd1.Constituency_ID = cd.Constituency_ID
+);
+  </code></pre>
+</section>
     <p>
       This project analyzes the results of the Indian General Election 2024 using SQL for data processing and Power BI for visualization. The data includes state-wise and constituency-level performance by political parties, voter turnout trends, and seat share comparisons.
     </p>
